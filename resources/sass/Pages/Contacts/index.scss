@@ -1,0 +1,18 @@
+.contacts {
+    input {
+        background-color: transparent;
+        border: none;
+        width: 91%;
+        padding: 12px 12px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    input:hover {
+        background-color: #fffaf3;
+    }
+
+    input:focus {
+        outline: 1px solid #ccc;
+        border: 1px solid #ccc;
+    }
+}
