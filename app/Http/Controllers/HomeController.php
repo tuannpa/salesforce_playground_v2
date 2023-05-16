@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SalesforceAccountConnectRequest;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Inertia\Response
      */
     public function index()
     {
-        return view('home');
+        return Inertia::render('Home/Index');
+    }
+
+    public function connectSFDCAccount(SalesforceAccountConnectRequest $salesforceAccountConnectRequest)
+    {
+
     }
 }

@@ -3,10 +3,11 @@ import DataTable from 'react-data-table-component';
 import { ToastContainer, toast } from 'react-toastify';
 import cloneDeep from 'lodash/cloneDeep';
 import debounce from 'lodash/debounce';
-import './EditableTextCell';
-import EditableTextCell from "./EditableTextCell";
+import EditableTextCell from "../../Common/EditableTextCell";
 
+const DEFAULT_TOTAL_ROWS = 0;
 const DEFAULT_PAGE = 1;
+const DEFAULT_ITEMS_PER_PAGE = 10;
 
 const toastConfig = {
     position: "bottom-right",
@@ -22,8 +23,8 @@ const toastConfig = {
 export default function List(props) {
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [totalRows, setTotalRows] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [totalRows, setTotalRows] = useState(DEFAULT_TOTAL_ROWS);
+    const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
     const axios = window.axios;
 
     const columns = [
@@ -58,7 +59,7 @@ export default function List(props) {
                 setLoading(false);
                 toast.success('Contact updated successfully!', toastConfig);
             } else {
-                fetchContacts(1);
+                fetchContacts(DEFAULT_PAGE);
                 toast.error('Failed to update contact', toastConfig);
             }
         } catch (err) {

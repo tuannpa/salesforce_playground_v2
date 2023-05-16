@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,5 +24,9 @@ Route::prefix('v1')->group(function () {
     Route::controller(ContactController::class)->group(function () {
         Route::get('contacts', 'getList');
         Route::patch('contacts/{id}', 'update');
+    });
+
+    Route::controller(HomeController::class)->group(function () {
+        Route::post('salesforce/connect', 'connectSFDCAccount');
     });
 });
