@@ -9,18 +9,18 @@ const Home = (props) => {
         {
             id: 1,
             title: 'Connections',
-            component: <Connection />
+            component: <Connection {...props}/>
         },
         {
             id: 2,
             title: 'Leads',
-            component: <Lead />
+            component: <Lead {...props}/>
         },
         {
 
             id: 3,
             title: 'Campaigns',
-            component: <Campaign />
+            component: <Campaign {...props}/>
         }
     ];
 

@@ -1,29 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
+import isEmpty from 'lodash/isEmpty';
+import { ToastContainer, toast } from 'react-toastify';
+import aes from 'crypto-js/aes';
+import encHex from 'crypto-js/enc-hex';
+import padZeroPadding from 'crypto-js/pad-zeropadding';
+import { toastConfig } from "../../../Common/Toaster/Toast.config";
+
+const USER_INFO_STORAGE_KEY = 'sf_user';
 
 export default function Connection(props) {
+    const axios = window.axios;
+    const [userInfo, setUserInfo] = useState({});
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const { loginCryptoConfig: { key: cryptoKey, iv: cryptoIv } } = props;
+
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem('sf_user');
+        if (loggedInUser) {
+            const foundUser = JSON.parse(loggedInUser);
+            setUserInfo(foundUser);
+        }
+    }, []);
+
+    const encryptData = (data) => {
+        const key = encHex.parse(cryptoKey);
+        const iv =  encHex.parse(cryptoIv);
+
+        return aes.encrypt(data, key, { iv:iv, padding: padZeroPadding }).toString();
+    };
+
+    const connectSalesforceAccount = async ({ username, password, token }, { setSubmitting }) => {
+        try {
+            const response = await axios.post('/api/v1/salesforce/connect', {
+                Username: encryptData(username),
+                Password: encryptData(password),
+                Token: encryptData(token)
+            });
+            setSubmitting(false);
+            const { success, message, userData } = response.data;
+
+            if (success) {
+                setUserInfo(userData);
+                localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(userData));
+                toast.success(message, toastConfig);
+            } else {
+                toast.error(message, toastConfig);
+            }
+        } catch (err) {
+            setSubmitting(false);
+            console.error('Failed to connect to Salesforce account. Reason: ', err);
+            toast.error('Failed to connect to Salesforce account', toastConfig);
+        }
+    };
+
+    const logout = async () => {
+        setIsLoggingOut(true);
+        try {
+            const response = await axios.post('/api/v1/salesforce/logout');
+
+            setIsLoggingOut(false);
+            if (response.data.success) {
+                localStorage.removeItem(USER_INFO_STORAGE_KEY);
+                setUserInfo({});
+            } else {
+                toast.error(response.data.message, toastConfig);
+            }
+        } catch (err) {
+            setIsLoggingOut(false);
+            console.error('Failed to log out Salesforce account', err)
+            toast.error('Failed to log out Salesforce account', toastConfig);
+        }
+    };
+
     return (
         <div>
             <h1 className="my-3 fw-bold">Account Details</h1>
-            <Formik
-                initialValues={{ email: '', password: '', token: '' }}
+            {isEmpty(userInfo) && <Formik
+                initialValues={{username: '', password: '', token: ''}}
                 validate={values => {
                     const errors = {};
-                    if (!values.email) {
-                        errors.email = 'Required';
-                    } else if (
-                        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                    ) {
-                        errors.email = 'Invalid email address';
-                    }
+                    Object.entries(values).forEach(([key, value]) => {
+                        if (!value) {
+                            errors[key] = 'Required';
+                        } else {
+                            if ('username' === key && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values[key])) {
+                                errors.username = 'Invalid email address';
+                            }
+                        }
+                    });
+
                     return errors;
                 }}
-                onSubmit={(values, { setSubmitting }) => {
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        setSubmitting(false);
-                    }, 400);
-                }}
+                onSubmit={connectSalesforceAccount}
             >
                 {({
                       values,
@@ -38,17 +107,19 @@ export default function Connection(props) {
                     <form onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-sm-4 mb-3">
-                                <label htmlFor="email" className="form-label fw-bold">Username:</label>
+                                <label htmlFor="username" className="form-label fw-bold">Username:</label>
                                 <input
-                                    id="email"
+                                    id="username"
                                     type="email"
-                                    name="email"
+                                    name="username"
                                     className="form-control"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.email}
+                                    value={values.username}
                                 />
-                                {errors.email && touched.email && errors.email}
+                                <small className="text-danger">
+                                    {errors.username && touched.username && errors.username}
+                                </small>
                             </div>
 
                             <div className="col-sm-4 mb-3">
@@ -62,7 +133,9 @@ export default function Connection(props) {
                                     onBlur={handleBlur}
                                     value={values.password}
                                 />
-                                {errors.password && touched.password && errors.password}
+                                <small className="text-danger">
+                                    {errors.password && touched.password && errors.password}
+                                </small>
                             </div>
 
                             <div className="col-sm-4 mb-3">
@@ -76,21 +149,40 @@ export default function Connection(props) {
                                     onBlur={handleBlur}
                                     value={values.token}
                                 />
-                                {errors.token && touched.token && errors.token}
+                                <small className="text-danger">
+                                    {errors.token && touched.token && errors.token}
+                                </small>
                             </div>
                         </div>
 
                         <div className="row justify-content-end">
                             <div className="col-sm-3">
-                                <button className="btn btn-primary w-50 float-end" type="submit" disabled={isSubmitting}>
-                                    Connect
+                                <button className="btn btn-primary w-50 float-end" type="submit"
+                                        disabled={isSubmitting}>
+                                    {isSubmitting &&
+                                        <span className="spinner-border spinner-border-sm me-1" role="status"
+                                              aria-hidden="true"></span>}
+                                    {isSubmitting ? 'Connecting...' : 'Connect'}
                                 </button>
                             </div>
                         </div>
 
                     </form>
                 )}
-            </Formik>
+            </Formik>}
+            {!isEmpty(userInfo) && <div className="row">
+                <p>You are already logged in as {userInfo.username}</p>
+                <div className="col-sm-3">
+                    <button className="btn btn-primary w-50" type="button" onClick={logout} disabled={isLoggingOut}>
+                        {isLoggingOut &&
+                            <span className="spinner-border spinner-border-sm me-1" role="status"
+                                  aria-hidden="true"></span>}
+                        {isLoggingOut ? 'Logging out...' : 'Log out'}
+                    </button>
+                </div>
+            </div>
+            }
+            <ToastContainer />
         </div>
     )
 }

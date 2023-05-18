@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class ContactRepository implements ContactRepositoryInterface
 {
-    private $salesforceRepository;
+    private SalesforceRepositoryInterface $salesforceRepository;
 
     /**
      * ContactRepository constructor.
@@ -21,14 +21,6 @@ class ContactRepository implements ContactRepositoryInterface
     public function __construct(SalesforceRepositoryInterface $salesforceRepository)
     {
         $this->salesforceRepository = $salesforceRepository;
-    }
-
-    private function retry(ClientResponse $response, $callback)
-    {
-        if ($response->failed() && Response::HTTP_UNAUTHORIZED === $response->status()) {
-            $this->salesforceRepository->fetchToken(true);
-            $callback();
-        }
     }
 
     /**

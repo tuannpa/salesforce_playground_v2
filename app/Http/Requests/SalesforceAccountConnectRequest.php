@@ -14,9 +14,9 @@ class SalesforceAccountConnectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Email' => 'string|email',
-            'Password' => 'string',
-            'Token' => 'string'
+            'Username' => 'required|string',
+            'Password' => 'required|string',
+            'Token' => 'required|string'
         ];
     }
 }

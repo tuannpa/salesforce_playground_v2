@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class SalesforceRepository implements SalesforceRepositoryInterface
 {
-    private $token = [];
+    private array $token = [];
     private $accessToken = null;
     private $apiUri = null;
 

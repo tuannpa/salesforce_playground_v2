@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use App\Interfaces\SalesforceRepositoryInterface;
 use App\Interfaces\ContactRepositoryInterface;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Inertia\Response as InertiaResponse;
 use Inertia\Inertia;
 
 class ContactController extends Controller
 {
-    private $salesforceRepository;
-    private $contactRepository;
+    private SalesforceRepositoryInterface $salesforceRepository;
+    private ContactRepositoryInterface $contactRepository;
 
     /**
      * ContactController constructor.
@@ -29,17 +31,17 @@ class ContactController extends Controller
     }
 
     /**
-     * @return \Inertia\Response
+     * @return InertiaResponse
      */
-    public function index() {
+    public function index(): InertiaResponse {
         return Inertia::render('Contacts/List');
     }
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getList(Request $request)
+    public function getList(Request $request): JsonResponse
     {
         $this->salesforceRepository->fetchToken();
         $totalContacts = $this->contactRepository->countTotalContacts();
@@ -54,9 +56,9 @@ class ContactController extends Controller
     /**
      * @param ContactUpdateRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(ContactUpdateRequest $request, $id)
+    public function update(ContactUpdateRequest $request, $id): JsonResponse
     {
         $this->salesforceRepository->fetchToken();
         $response = $this->contactRepository->updateContact($id, $request->all());

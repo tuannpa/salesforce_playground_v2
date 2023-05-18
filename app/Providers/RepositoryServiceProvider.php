@@ -10,7 +10,7 @@ class RepositoryServiceProvider extends ServiceProvider
      * Register repository prefix in here, it will automatically bind the interface with the relevant repository instance as per register function below
      * @var string[]
      */
-    private $repositories = [
+    private array $repositories = [
         'bind' => [
             'Contact'
         ],

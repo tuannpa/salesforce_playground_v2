@@ -4,21 +4,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import cloneDeep from 'lodash/cloneDeep';
 import debounce from 'lodash/debounce';
 import EditableTextCell from "../../Common/EditableTextCell";
+import { toastConfig } from "../../Common/Toaster/Toast.config";
 
 const DEFAULT_TOTAL_ROWS = 0;
 const DEFAULT_PAGE = 1;
 const DEFAULT_ITEMS_PER_PAGE = 10;
-
-const toastConfig = {
-    position: "bottom-right",
-    autoClose: 800,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-};
 
 export default function List(props) {
     const [contacts, setContacts] = useState([]);

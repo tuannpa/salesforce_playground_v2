@@ -8,5 +8,5 @@ interface SalesforceRepositoryInterface
 
     public function getApiUri(): string | null;
 
-    public function fetchToken($force = false): void;
+    public function fetchToken(bool $force = false): void;
 }

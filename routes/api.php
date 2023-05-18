@@ -28,5 +28,6 @@ Route::prefix('v1')->group(function () {
 
     Route::controller(HomeController::class)->group(function () {
         Route::post('salesforce/connect', 'connectSFDCAccount');
+        Route::post('salesforce/logout', 'logoutSalesforceAccount');
     });
 });

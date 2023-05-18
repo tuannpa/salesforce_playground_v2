@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f699eb124497840f3b19d8d6c9c1670b",
+    "content-hash": "7c0229a5371ed7c581d75ee0efae2b09",
     "packages": [
         {
             "name": "brick/math",
@@ -2336,6 +2336,114 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "phpforce/common",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpforce/common.git",
+                "reference": "aa96dfb6b0f43024c95a9d9c88396013e7513f9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpforce/common/zipball/aa96dfb6b0f43024c95a9d9c88396013e7513f9c",
+                "reference": "aa96dfb6b0f43024c95a9d9c88396013e7513f9c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/event-dispatcher": ">=2.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Phpforce\\Common": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David de Boer",
+                    "email": "david@ddeboer.nl",
+                    "homepage": "http://ddeboer.nl"
+                }
+            ],
+            "description": "Common library for the PhpForce Salesforce libraries",
+            "keywords": [
+                "crm",
+                "force.com",
+                "salesforce",
+                "soap",
+                "web services"
+            ],
+            "support": {
+                "issues": "https://github.com/phpforce/common/issues",
+                "source": "https://github.com/phpforce/common/tree/master"
+            },
+            "time": "2014-01-09T10:36:21+00:00"
+        },
+        {
+            "name": "phpforce/soap-client",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpforce/soap-client.git",
+                "reference": "df1d06533d28b34bf7e1a8eb4c6b43316ea25b56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpforce/soap-client/zipball/df1d06533d28b34bf7e1a8eb4c6b43316ea25b56",
+                "reference": "df1d06533d28b34bf7e1a8eb4c6b43316ea25b56",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "phpforce/common": "dev-master",
+                "psr/log": "*"
+            },
+            "require-dev": {
+                "doctrine/common": ">=2.3"
+            },
+            "suggest": {
+                "doctrine/common": "For caching SOAP responses",
+                "monolog/monolog": "For logging SOAP transactions"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Phpforce\\SoapClient": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David de Boer",
+                    "email": "david@ddeboer.nl",
+                    "homepage": "http://ddeboer.nl"
+                }
+            ],
+            "description": "A PHP client for the Salesforce SOAP API",
+            "keywords": [
+                "crm",
+                "force.com",
+                "salesforce",
+                "soap",
+                "web services"
+            ],
+            "support": {
+                "issues": "https://github.com/phpforce/soap-client/issues",
+                "source": "https://github.com/phpforce/soap-client/tree/master"
+            },
+            "time": "2015-04-05T18:17:07+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -7951,8 +8059,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "phpforce/soap-client": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
