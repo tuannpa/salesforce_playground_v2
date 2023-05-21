@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SalesforceAccountConnectRequest;
-use App\Interfaces\SalesforceSOAPServiceInterface;
+use App\Interfaces\SalesforceServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    private SalesforceSOAPServiceInterface $salesforceSOAPService;
+    private SalesforceServiceInterface $salesforceSOAPService;
 
     /**
-     * @param SalesforceSOAPServiceInterface $salesforceSOAPService
+     * @param SalesforceServiceInterface $salesforceSOAPService
      */
-    public function __construct(SalesforceSOAPServiceInterface $salesforceSOAPService)
+    public function __construct(SalesforceServiceInterface $salesforceSOAPService)
     {
         $this->salesforceSOAPService = $salesforceSOAPService;
     }

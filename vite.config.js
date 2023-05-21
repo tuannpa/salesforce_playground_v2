@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import reactRefresh from '@vitejs/plugin-react-refresh';
 import path from 'path';
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
             ],
             refresh: true,
         }),
+        reactRefresh(),
     ],
     server: {
         hmr: {

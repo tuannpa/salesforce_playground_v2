@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Connection from "./Connections";
 import Lead from "./Leads";
 import Campaign from "./Campaigns";
 
 const Home = (props) => {
+    const [userInfo, setUserInfo] = useState({});
+
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem('sf_user');
+        if (loggedInUser) {
+            const foundUser = JSON.parse(loggedInUser);
+            setUserInfo(foundUser);
+        }
+    }, []);
+
     const tabs  = [
         {
             id: 1,
             title: 'Connections',
-            component: <Connection {...props}/>
+            component: <Connection {...props} userInfo={userInfo} updateUserInfo={setUserInfo}/>
         },
         {
             id: 2,
             title: 'Leads',
-            component: <Lead {...props}/>
+            component: <Lead {...props} userInfo={userInfo}/>
         },
         {
 

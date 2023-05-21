@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Interfaces\SalesforceSOAPServiceInterface;
-use App\Services\SalesforceSOAPService;
+use App\Interfaces\SalesforceServiceInterface;
+use App\Services\SalesforceService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(SalesforceSOAPServiceInterface::class, SalesforceSOAPService::class);
+        $this->app->bind(SalesforceServiceInterface::class, SalesforceService::class);
     }
 
     /**

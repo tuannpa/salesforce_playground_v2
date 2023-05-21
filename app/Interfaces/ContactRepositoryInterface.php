@@ -6,7 +6,7 @@ interface ContactRepositoryInterface
 {
     public function countTotalContacts();
 
-    public function fetchContacts(string $query);
+    public function fetchContacts(array $query);
 
     public function updateContact(string $id, $dto);
 }

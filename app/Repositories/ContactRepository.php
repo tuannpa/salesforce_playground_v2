@@ -51,10 +51,10 @@ class ContactRepository implements ContactRepositoryInterface
     }
 
     /**
-     * @param $query
+     * @param array $query
      * @return array
      */
-    public function fetchContacts($query): array
+    public function fetchContacts(array $query): array
     {
         $page = $query['page'] ?? 1;
         $fields = $query['fields'] ?? 'Id, FirstName, LastName, Email, Phone';

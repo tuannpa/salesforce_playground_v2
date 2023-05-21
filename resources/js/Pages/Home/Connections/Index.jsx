@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import isEmpty from 'lodash/isEmpty';
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,17 +11,15 @@ const USER_INFO_STORAGE_KEY = 'sf_user';
 
 export default function Connection(props) {
     const axios = window.axios;
-    const [userInfo, setUserInfo] = useState({});
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const { loginCryptoConfig: { key: cryptoKey, iv: cryptoIv } } = props;
-
-    useEffect(() => {
-        const loggedInUser = localStorage.getItem('sf_user');
-        if (loggedInUser) {
-            const foundUser = JSON.parse(loggedInUser);
-            setUserInfo(foundUser);
+    const {
+        userInfo,
+        updateUserInfo,
+        loginCryptoConfig: {
+            key: cryptoKey,
+            iv: cryptoIv
         }
-    }, []);
+    } = props;
 
     const encryptData = (data) => {
         const key = encHex.parse(cryptoKey);
@@ -38,11 +36,11 @@ export default function Connection(props) {
                 Token: encryptData(token)
             });
             setSubmitting(false);
-            const { success, message, userData } = response.data;
+            const { success, message, userInfo } = response.data;
 
             if (success) {
-                setUserInfo(userData);
-                localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(userData));
+                updateUserInfo(userInfo);
+                localStorage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(userInfo));
                 toast.success(message, toastConfig);
             } else {
                 toast.error(message, toastConfig);
@@ -62,7 +60,7 @@ export default function Connection(props) {
             setIsLoggingOut(false);
             if (response.data.success) {
                 localStorage.removeItem(USER_INFO_STORAGE_KEY);
-                setUserInfo({});
+                updateUserInfo({});
             } else {
                 toast.error(response.data.message, toastConfig);
             }
@@ -74,7 +72,7 @@ export default function Connection(props) {
     };
 
     return (
-        <div>
+        <div className="container">
             <h1 className="my-3 fw-bold">Account Details</h1>
             {isEmpty(userInfo) && <Formik
                 initialValues={{username: '', password: '', token: ''}}
