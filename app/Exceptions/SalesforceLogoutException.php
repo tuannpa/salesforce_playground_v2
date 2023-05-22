@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class SalesforceSOAPLogoutException extends Exception
+class SalesforceLogoutException extends Exception
 {
 
 }

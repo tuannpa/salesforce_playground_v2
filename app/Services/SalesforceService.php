@@ -2,18 +2,64 @@
 
 namespace App\Services;
 
-use App\Exceptions\SalesforceSOAPLogoutException;
+use App\Exceptions\SalesforceLogoutException;
+use App\Exceptions\SalesforceSoqlFilterException;
 use App\Interfaces\SalesforceServiceInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SalesforceService implements SalesforceServiceInterface
 {
-    private static $timeout = 30;
+    private static int $timeout = 30;
 
     private string $sfdcUserSessionKey = 'sfdcUserSession';
 
     private array $tokenData = [];
+
+    /**
+     * @param array $filter
+     * @return string
+     * @throws SalesforceSoqlFilterException
+     */
+    private function buildFilter(array $filter): string
+    {
+        $filterStr = '';
+
+        foreach ($filter as $field => $props) {
+            $operator = $props['operator'] ?? null;
+            $value = $props['value'];
+
+            if (empty($operator)) {
+                throw new SalesforceSoqlFilterException('Must define the operator in the provided filter array');
+            }
+
+            if (!empty($filterStr)) {
+                $filterStr .= ' and ';
+            }
+
+            $ucFirstField = ucfirst($field);
+            $valueByType = is_string($value) ? "'$value'" : $value;
+
+            switch ($operator) {
+                case 'in':
+                    $v = explode(',', $value);
+
+                    $filterValue = implode(',', array_map(function($s) {
+                        return "'$s'";
+                    }, $v));
+
+                    $filterStr .= "$ucFirstField in ($filterValue)";
+                    break;
+                default:
+                    $filterStr .= "$ucFirstField $operator $valueByType";
+                    break;
+            }
+        }
+
+        $filterStr .= ' ';
+
+        return $filterStr;
+    }
 
     /**
      * @param string $encryptedString
@@ -40,7 +86,6 @@ class SalesforceService implements SalesforceServiceInterface
     public function authenticate(string $username, string $password, string $securityToken): array
     {
         $success = false;
-        $message = "";
         $userInfo = [];
         $decryptedUsername = $this->decryptLoginData($username);
 
@@ -62,7 +107,8 @@ class SalesforceService implements SalesforceServiceInterface
                 $this->tokenData = $tokenData;
                 $userInfo = [
                     'username' => $decryptedUsername,
-                    'token' => $this->tokenData['access_token']
+                    'token' => $this->tokenData['access_token'],
+                    'instanceUri' => $this->tokenData['instance_url']
                 ];
 
                 session()->put($this->sfdcUserSessionKey, $this->tokenData);
@@ -84,13 +130,13 @@ class SalesforceService implements SalesforceServiceInterface
 
     /**
      * @return array
-     * @throws SalesforceSOAPLogoutException
+     * @throws SalesforceLogoutException
      */
     public function accountLogout(): array
     {
         if (!session()->has($this->sfdcUserSessionKey)) {
             Log::error("Error occurred when closing Salesforce session, reason: Session " . $this->sfdcUserSessionKey . " exists? - " . session()->has($this->sfdcUserSessionKey));
-            throw new SalesforceSOAPLogoutException('Failed to close Salesforce session');
+            throw new SalesforceLogoutException('Failed to close Salesforce session');
         }
 
         $success = false;
@@ -153,31 +199,52 @@ class SalesforceService implements SalesforceServiceInterface
         return $result;
     }
 
-    public function fetchRecords(string $entity, array $queryParams): array
+    /**
+     * @param string $entity
+     * @param array $queryParams
+     * @param array $options
+     * @return array
+     */
+    public function fetchRecords(string $entity, array $queryParams, array $options = []): array
     {
         $page = $queryParams['page'] ?? 1;
         $fields = $queryParams['fields'] ?? 'Id, FirstName, LastName, Email, Phone';
         $itemsPerPage = $queryParams['itemsPerPage'] ??  10;
         $offset = intval($itemsPerPage) * (intval($page) - 1);
-        $query = "?q=select $fields from $entity limit $itemsPerPage";
-        [
-            'access_token' => $sfdcToken,
-            'instance_url' => $sfdcApiUri
-        ] = session($this->sfdcUserSessionKey);
         $result = [];
 
-        if ($offset > 0) {
-            $query .= " offset $offset";
-        }
-
-        $endpoint = $sfdcApiUri . config('salesforce.queryService') . $query;
-
         try {
+            $query = "?q=select $fields from $entity ";
+
+            if (!empty($options['where'])) {
+                $query .= 'where ' . $this->buildFilter($options['where']);
+            }
+
+            $groupBy = $options['groupBy'] ?? null;
+            if (!empty($groupBy)) {
+                $query .= "group by $groupBy ";
+            }
+
+            $query .= "limit $itemsPerPage";
+            [
+                'access_token' => $sfdcToken,
+                'instance_url' => $sfdcApiUri
+            ] = session($this->sfdcUserSessionKey);
+
+            if ($offset > 0) {
+                $query .= " offset $offset";
+            }
+
+            $endpoint = $sfdcApiUri . config('salesforce.queryService') . $query;
+
             $response = Http::connectTimeout(self::$timeout)->withToken($sfdcToken)->get($endpoint);
 
             if ($response->successful()) {
                 $json = $response->json();
                 $result['records'] = $json['records'];
+                if (!empty($options['where'])) {
+                    $result['totalRecords'] = $json['totalSize'];
+                }
             }
         } catch (\Exception $e) {
             Log::error("Error occurred when fetching Salesforce $entity data: " . $e->getMessage());

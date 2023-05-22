@@ -40,6 +40,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::controller(CampaignController::class)->group(function () {
-        Route::post('campaigns', 'getList');
+        Route::get('campaigns', 'getList');
+        Route::get('campaigns/{campaignId}/chart', 'getChartData');
     });
 });

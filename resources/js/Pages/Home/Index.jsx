@@ -30,7 +30,7 @@ const Home = (props) => {
 
             id: 3,
             title: 'Campaigns',
-            component: <Campaign {...props}/>
+            component: <Campaign {...props} userInfo={userInfo}/>
         }
     ];
 

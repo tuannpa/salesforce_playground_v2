@@ -73,101 +73,109 @@ export default function Connection(props) {
 
     return (
         <div className="container">
-            <h1 className="my-3 fw-bold">Account Details</h1>
-            {isEmpty(userInfo) && <Formik
-                initialValues={{username: '', password: '', token: ''}}
-                validate={values => {
-                    const errors = {};
-                    Object.entries(values).forEach(([key, value]) => {
-                        if (!value) {
-                            errors[key] = 'Required';
-                        } else {
-                            if ('username' === key && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values[key])) {
-                                errors.username = 'Invalid email address';
-                            }
-                        }
-                    });
+            <div className="row">
+                <div className="col-12">
+                    <h1 className="my-3 fw-bold">Account Details</h1>
+                    {isEmpty(userInfo) && <Formik
+                        initialValues={{username: '', password: '', token: ''}}
+                        validate={values => {
+                            const errors = {};
+                            Object.entries(values).forEach(([key, value]) => {
+                                if (!value) {
+                                    errors[key] = 'Required';
+                                } else {
+                                    if ('username' === key && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values[key])) {
+                                        errors.username = 'Invalid email address';
+                                    }
+                                }
+                            });
 
-                    return errors;
-                }}
-                onSubmit={connectSalesforceAccount}
-            >
-                {({
-                      values,
-                      errors,
-                      touched,
-                      handleChange,
-                      handleBlur,
-                      handleSubmit,
-                      isSubmitting,
-                      /* and other goodies */
-                  }) => (
-                    <form onSubmit={handleSubmit}>
-                        <div className="row">
-                            <div className="col-sm-4 mb-3">
-                                <label htmlFor="username" className="form-label fw-bold">Username:</label>
-                                <input
-                                    id="username"
-                                    type="email"
-                                    name="username"
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.username}
-                                />
-                                <small className="text-danger">
-                                    {errors.username && touched.username && errors.username}
-                                </small>
-                            </div>
+                            return errors;
+                        }}
+                        onSubmit={connectSalesforceAccount}
+                    >
+                        {({
+                              values,
+                              errors,
+                              touched,
+                              handleChange,
+                              handleBlur,
+                              handleSubmit,
+                              isSubmitting,
+                              /* and other goodies */
+                          }) => (
+                            <form onSubmit={handleSubmit}>
+                                <div className="row">
+                                    <div className="col-sm-4 mb-3">
+                                        <label htmlFor="username" className="form-label fw-bold">Username:</label>
+                                        <input
+                                            id="username"
+                                            type="email"
+                                            name="username"
+                                            placeholder="Enter your username"
+                                            className="form-control"
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.username}
+                                        />
+                                        <small className="text-danger">
+                                            {errors.username && touched.username && errors.username}
+                                        </small>
+                                    </div>
 
-                            <div className="col-sm-4 mb-3">
-                                <label htmlFor="password" className="form-label fw-bold">Password:</label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.password}
-                                />
-                                <small className="text-danger">
-                                    {errors.password && touched.password && errors.password}
-                                </small>
-                            </div>
+                                    <div className="col-sm-4 mb-3">
+                                        <label htmlFor="password" className="form-label fw-bold">Password:</label>
+                                        <input
+                                            id="password"
+                                            type="password"
+                                            name="password"
+                                            placeholder="Enter your password"
+                                            className="form-control"
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.password}
+                                        />
+                                        <small className="text-danger">
+                                            {errors.password && touched.password && errors.password}
+                                        </small>
+                                    </div>
 
-                            <div className="col-sm-4 mb-3">
-                                <label htmlFor="token" className="form-label fw-bold">Token:</label>
-                                <input
-                                    id="token"
-                                    type="text"
-                                    name="token"
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.token}
-                                />
-                                <small className="text-danger">
-                                    {errors.token && touched.token && errors.token}
-                                </small>
-                            </div>
-                        </div>
+                                    <div className="col-sm-4 mb-3">
+                                        <label htmlFor="token" className="form-label fw-bold">Token:</label>
+                                        <input
+                                            id="token"
+                                            type="text"
+                                            name="token"
+                                            placeholder="Enter your token"
+                                            className="form-control"
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.token}
+                                        />
+                                        <small className="text-danger">
+                                            {errors.token && touched.token && errors.token}
+                                        </small>
+                                    </div>
+                                </div>
 
-                        <div className="row justify-content-end">
-                            <div className="col-sm-3">
-                                <button className="btn btn-primary w-50 float-end" type="submit"
-                                        disabled={isSubmitting}>
-                                    {isSubmitting &&
-                                        <span className="spinner-border spinner-border-sm me-1" role="status"
-                                              aria-hidden="true"></span>}
-                                    {isSubmitting ? 'Connecting...' : 'Connect'}
-                                </button>
-                            </div>
-                        </div>
+                                <div className="row justify-content-end">
+                                    <div className="col-sm-3">
+                                        <button className="btn btn-primary w-50 float-end" type="submit"
+                                                disabled={isSubmitting}>
+                                            {isSubmitting &&
+                                                <span className="spinner-border spinner-border-sm me-1" role="status"
+                                                      aria-hidden="true"></span>}
+                                            {isSubmitting ? 'Connecting...' : 'Connect'}
+                                        </button>
+                                    </div>
+                                </div>
 
-                    </form>
-                )}
-            </Formik>}
+                            </form>
+                        )}
+                    </Formik>}
+                </div>
+            </div>
+
             {!isEmpty(userInfo) && <div className="row">
                 <p>You are already logged in as {userInfo.username}</p>
                 <div className="col-sm-3">

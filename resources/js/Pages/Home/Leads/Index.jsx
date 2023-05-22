@@ -106,7 +106,9 @@ export default function Lead(props) {
     }
 
     useEffect(() => {
-        fetchLeads(DEFAULT_PAGE);
+        if (!isEmpty(userInfo)) {
+            fetchLeads(DEFAULT_PAGE);
+        }
     }, []);
 
     useEffect(() => {

@@ -32,9 +32,10 @@ interface SalesforceServiceInterface
     /**
      * @param string $entity
      * @param array $queryParams
+     * @param array $options
      * @return array
      */
-    public function fetchRecords(string $entity, array $queryParams): array;
+    public function fetchRecords(string $entity, array $queryParams, array $options): array;
 
     /**
      * @param string $entity
