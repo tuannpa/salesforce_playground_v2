@@ -6,11 +6,11 @@ import aes from 'crypto-js/aes';
 import encHex from 'crypto-js/enc-hex';
 import padZeroPadding from 'crypto-js/pad-zeropadding';
 import { toastConfig } from "../../../Common/Toaster/Toast.config";
+import apiInstance from "../../../Common/API/instance";
 
 const USER_INFO_STORAGE_KEY = 'sf_user';
 
 export default function Connection(props) {
-    const axios = window.axios;
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const {
         userInfo,
@@ -30,7 +30,7 @@ export default function Connection(props) {
 
     const connectSalesforceAccount = async ({ username, password, token }, { setSubmitting }) => {
         try {
-            const response = await axios.post('/api/v1/salesforce/connect', {
+            const response = await apiInstance.post('/salesforce/connect', {
                 Username: encryptData(username),
                 Password: encryptData(password),
                 Token: encryptData(token)
@@ -55,7 +55,7 @@ export default function Connection(props) {
     const logout = async () => {
         setIsLoggingOut(true);
         try {
-            const response = await axios.post('/api/v1/salesforce/logout');
+            const response = await apiInstance.post('/salesforce/logout');
 
             setIsLoggingOut(false);
             if (response.data.success) {

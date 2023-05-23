@@ -12,9 +12,10 @@ class SalesforceService implements SalesforceServiceInterface
 {
     private static int $timeout = 30;
 
-    private string $sfdcUserSessionKey = 'sfdcUserSession';
-
     private array $tokenData = [];
+
+    public static string $sfdcUserSessionKey = 'sfdcUserSession';
+
 
     /**
      * @param array $filter
@@ -111,7 +112,7 @@ class SalesforceService implements SalesforceServiceInterface
                     'instanceUri' => $this->tokenData['instance_url']
                 ];
 
-                session()->put($this->sfdcUserSessionKey, $this->tokenData);
+                session()->put(self::$sfdcUserSessionKey, $this->tokenData);
             } else {
                 $responseBody = $tokenResponse->json();
                 $message = ucfirst($responseBody['error_description']) ?? "Error happened while authenticating the username $decryptedUsername";
@@ -134,15 +135,15 @@ class SalesforceService implements SalesforceServiceInterface
      */
     public function accountLogout(): array
     {
-        if (!session()->has($this->sfdcUserSessionKey)) {
-            Log::error("Error occurred when closing Salesforce session, reason: Session " . $this->sfdcUserSessionKey . " exists? - " . session()->has($this->sfdcUserSessionKey));
+        if (!session()->has(self::$sfdcUserSessionKey)) {
+            Log::error("Error occurred when closing Salesforce session, reason: Session " . self::$sfdcUserSessionKey . " exists? - " . session()->has(self::$sfdcUserSessionKey));
             throw new SalesforceLogoutException('Failed to close Salesforce session');
         }
 
         $success = false;
         [
             'access_token' => $sfdcToken
-        ] = session($this->sfdcUserSessionKey);
+        ] = session(self::$sfdcUserSessionKey);
 
         try {
             $revokeResponse = Http::asForm()->post(config('salesforce.revokeUri'), [
@@ -154,7 +155,7 @@ class SalesforceService implements SalesforceServiceInterface
                 $message = "Log out successfully";
 
                 // Unset session
-                session()->forget($this->sfdcUserSessionKey);
+                session()->forget(self::$sfdcUserSessionKey);
             } else {
                 $responseBody = $revokeResponse->json();
                 $message = $responseBody['invalid_token'] ?? "Failed to log user out";
@@ -180,7 +181,7 @@ class SalesforceService implements SalesforceServiceInterface
         [
             'access_token' => $sfdcToken,
             'instance_url' => $sfdcApiUri
-        ] = session($this->sfdcUserSessionKey);
+        ] = session(self::$sfdcUserSessionKey);
         $result = [];
         $queryParams = "?q=select count() from $entity";
         $endpoint = $sfdcApiUri . config('salesforce.queryService') . $queryParams;
@@ -229,7 +230,7 @@ class SalesforceService implements SalesforceServiceInterface
             [
                 'access_token' => $sfdcToken,
                 'instance_url' => $sfdcApiUri
-            ] = session($this->sfdcUserSessionKey);
+            ] = session(self::$sfdcUserSessionKey);
 
             if ($offset > 0) {
                 $query .= " offset $offset";
@@ -269,7 +270,7 @@ class SalesforceService implements SalesforceServiceInterface
         [
             'access_token' => $sfdcToken,
             'instance_url' => $sfdcApiUri
-        ] = session($this->sfdcUserSessionKey);
+        ] = session(self::$sfdcUserSessionKey);
         $columns = !empty($projection) ? $projection : 'Id, FirstName, LastName, Email, Phone';
         $query = "SELECT $columns from $entity";
         if (!empty($filter['where'])) {
@@ -315,7 +316,7 @@ class SalesforceService implements SalesforceServiceInterface
         [
             'access_token' => $sfdcToken,
             'instance_url' => $sfdcApiUri
-        ] = session($this->sfdcUserSessionKey);
+        ] = session(self::$sfdcUserSessionKey);
 
         $endpoint = $sfdcApiUri . config('salesforce.bulkApiService') . "/$exportId/results";
 

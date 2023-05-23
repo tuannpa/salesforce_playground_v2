@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import DataTable from "react-data-table-component";
 import { ToastContainer } from "react-toastify";
 import MultiSelectWithCheckbox from "../../../Common/MultiSelectWithCheckbox";
+import apiInstance from "../../../Common/API/instance";
 import Chart from "./Popup/Chart";
 
 const DEFAULT_TOTAL_ROWS = 0;
@@ -28,7 +29,6 @@ const typeOptions = [
 ];
 
 export default function Campaign(props) {
-    const axios = window.axios;
     const { userInfo } = props;
     const [isOpenChartModal, setIsOpenChartModal] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -91,7 +91,7 @@ export default function Campaign(props) {
             setCurrentPage(page);
         }
 
-        const response = await axios.get(`/api/v1/campaigns?page=${page}&itemsPerPage=${newPerPage}`);
+        const response = await apiInstance.get(`/campaigns?page=${page}&itemsPerPage=${newPerPage}`);
 
         setCampaigns(response.data.records);
         setItemsPerPage(newPerPage);
@@ -112,12 +112,12 @@ export default function Campaign(props) {
             }
         });
         const filter = new URLSearchParams(filterObj).toString();
-        let endpoint = `/api/v1/campaigns?page=${currentPage}&itemsPerPage=${itemsPerPage}`;
+        let endpoint = `/campaigns?page=${currentPage}&itemsPerPage=${itemsPerPage}`;
         if (filter) {
             endpoint += `&${filter}`;
         }
 
-        const response = await axios.get(endpoint);
+        const response = await apiInstance.get(endpoint);
 
         setCampaigns(response.data.records);
         setTotalRows(response.data.totalRecords);

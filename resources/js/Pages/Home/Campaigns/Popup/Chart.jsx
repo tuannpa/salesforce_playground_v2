@@ -12,6 +12,7 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import isEmpty from 'lodash/isEmpty';
+import apiInstance from "../../../../Common/API/instance";
 
 Modal.setAppElement('#app');
 ChartJS.register(
@@ -91,7 +92,7 @@ export default function Chart(props) {
     const fetchChartData = async () => {
         setLoading(true);
 
-        const response = await axios.get(`/api/v1/campaigns/${campaignId}/chart`);
+        const response = await apiInstance.get(`/campaigns/${campaignId}/chart`);
 
         setLoading(false);
 

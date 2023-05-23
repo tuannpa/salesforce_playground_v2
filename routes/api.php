@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Middleware\VerifySalesforceSession;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +38,10 @@ Route::prefix('v1')->group(function () {
         Route::get('leads', 'getList');
         Route::post('leads/export', 'exportData');
         Route::post('leads/export/{exportId}/result', 'getExportResult');
-    });
+    })->middleware(VerifySalesforceSession::class);
 
     Route::controller(CampaignController::class)->group(function () {
         Route::get('campaigns', 'getList');
         Route::get('campaigns/{campaignId}/chart', 'getChartData');
-    });
+    })->middleware(VerifySalesforceSession::class);
 });

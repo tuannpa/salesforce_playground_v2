@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import isEmpty from 'lodash/isEmpty';
 import { toast, ToastContainer } from "react-toastify";
 import { toastConfig } from "../../../Common/Toaster/Toast.config";
+import apiInstance from "../../../Common/API/instance";
 
 const DEFAULT_TOTAL_ROWS = 0;
 const DEFAULT_PAGE = 1;
@@ -13,7 +14,6 @@ let retry = 1;
 let polling = null;
 
 export default function Lead(props) {
-    const axios = window.axios;
     const [leads, setLeads] = useState([]);
     const [loading, setLoading] = useState(false);
     const [totalRows, setTotalRows] = useState(DEFAULT_TOTAL_ROWS);
@@ -44,7 +44,7 @@ export default function Lead(props) {
     const fetchLeads = async page => {
         setLoading(true);
 
-        const response = await axios.get(`/api/v1/leads?page=${page}&itemsPerPage=${itemsPerPage}`);
+        const response = await apiInstance.get(`/leads?page=${page}&itemsPerPage=${itemsPerPage}`);
 
         setLeads(response.data.records);
         setTotalRows(response.data.totalRecords);
@@ -56,7 +56,7 @@ export default function Lead(props) {
     const handlePerRowsChange = async (newPerPage, page) => {
         setLoading(true);
 
-        const response = await axios.get(`/api/v1/leads?page=${page}&itemsPerPage=${newPerPage}`);
+        const response = await apiInstance.get(`/leads?page=${page}&itemsPerPage=${newPerPage}`);
 
         setLeads(response.data.records);
         setItemsPerPage(newPerPage);
@@ -64,7 +64,7 @@ export default function Lead(props) {
     };
 
     const pollingExportResult = async () => {
-        const response = await axios.post(`/api/v1/leads/export/${exportId}/result`);
+        const response = await apiInstance.post(`/leads/export/${exportId}/result`);
 
         if (response.data) {
             setExportId(null);
@@ -93,7 +93,7 @@ export default function Lead(props) {
     const exportData = async () => {
         setIsExporting(true);
 
-        const response = await axios.post(`/api/v1/leads/export`);
+        const response = await apiInstance.post(`/leads/export`);
 
         const { data: { success, message, result } } = response;
 
