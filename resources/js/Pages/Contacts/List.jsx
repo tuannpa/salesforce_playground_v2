@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { ToastContainer, toast } from 'react-toastify';
 import cloneDeep from 'lodash/cloneDeep';
 import debounce from 'lodash/debounce';
-import EditableTextCell from "../../Common/EditableTextCell";
+import EditableTextCell from "../../Common/Components/EditableTextCell";
 import { toastConfig } from "../../Common/Toaster/Toast.config";
 
 const DEFAULT_TOTAL_ROWS = 0;

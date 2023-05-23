@@ -5,7 +5,7 @@ import values from 'lodash/values';
 import cloneDeep from 'lodash/cloneDeep';
 import DataTable from "react-data-table-component";
 import { ToastContainer } from "react-toastify";
-import MultiSelectWithCheckbox from "../../../Common/MultiSelectWithCheckbox";
+import MultiSelectWithCheckbox from "../../../Common/Components/MultiSelectWithCheckbox";
 import apiInstance from "../../../Common/API/instance";
 import Chart from "./Popup/Chart";
 
