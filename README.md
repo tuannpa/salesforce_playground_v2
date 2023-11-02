@@ -4,7 +4,7 @@
 
 - Install composer 2.0.
 - Install docker (latest version), docker-compose (latest version).
-- Linux OS required. This project runs with Laravel Sail, so it is best to run in a Linux OS machine. I have tried with WSL2, but it is having some issues with this platform when installing new packages.
+- WSL2 should be installed. Ubuntu version 20.04 or above.
 
 ---------------
 **Project setup**
